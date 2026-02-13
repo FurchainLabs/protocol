@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://furchainlabs.github.io/protocol/v1/character.schema.json",
+  "type": "object",
+  "required": ["protocolVersion", "id", "name", "display", "revision", "contentRating"],
+  "additionalProperties": true,
+  "properties": {
+    "$schema": { "type": "string" },
+    "protocolVersion": { "type": "integer", "const": 1 },
+    "id": { "type": "string", "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$" },
+    "name": { "type": "string", "minLength": 1, "pattern": "^[a-z][a-z0-9_-]*$" },
+    "display": { "type": "string", "minLength": 1 },
+    "revision": { "type": "integer", "minimum": 1 },
+    "contentRating": {
+      "type": "object",
+      "required": ["primary"],
+      "additionalProperties": true,
+      "properties": {
+        "primary": { "type": "string", "enum": ["safe", "questionable", "explicit"] }
+      }
+    },
+    "endpoint": { "type": "string", "format": "uri" },
+    "displayAssets": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "avatar": { "type": "string", "minLength": 1 },
+        "banner": { "type": "string", "minLength": 1 },
+        "model3d": { "type": "string", "minLength": 1 },
+        "live2d": { "type": "string", "minLength": 1 }
+      }
+    },
+    "identityMappings": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "openclawSoul": { "type": "string", "minLength": 1 },
+        "openclawIdentity": { "type": "string", "minLength": 1 },
+        "characterCardV3": { "type": "string", "minLength": 1 }
+      }
+    },
+    "capabilities": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "a2aAgentCard": { "type": "string", "format": "uri" },
+        "mcpServer": { "type": "string", "format": "uri" }
+      }
+    },
+    "autonomy": {
+      "type": "object",
+      "required": ["level"],
+      "additionalProperties": true,
+      "properties": {
+        "level": { "type": "string", "enum": ["manual", "assisted", "autonomous"] },
+        "runtime": { "type": "string", "minLength": 1 },
+        "humanOversight": { "type": "string", "minLength": 1 }
+      }
+    },
+    "relations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "target"],
+        "additionalProperties": true,
+        "properties": {
+          "type": { "type": "string", "minLength": 1 },
+          "target": { "type": "string", "minLength": 1 },
+          "note": { "type": "string" },
+          "mutual": { "type": "boolean" }
+        }
+      }
+    },
+    "signature": {
+      "type": "object",
+      "required": ["alg", "kid", "created", "sig"],
+      "additionalProperties": true,
+      "properties": {
+        "alg": { "type": "string", "const": "Ed25519" },
+        "kid": { "type": "string", "minLength": 1 },
+        "created": { "type": "string", "format": "date-time" },
+        "sig": { "type": "string", "pattern": "^[A-Za-z0-9_-]+$" }
+      }
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://furchainlabs.github.io/protocol/v1/group.schema.json",
+  "type": "object",
+  "required": ["version", "groups"],
+  "additionalProperties": true,
+  "properties": {
+    "$schema": { "type": "string" },
+    "version": { "type": "integer", "const": 1 },
+    "groups": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["type", "description", "memberCount", "keyVersion"],
+        "additionalProperties": true,
+        "properties": {
+          "type": { "type": "string", "enum": ["open", "approval", "invite", "private"] },
+          "description": { "type": "string" },
+          "memberCount": { "type": "integer", "minimum": 0 },
+          "keyVersion": { "type": "integer", "minimum": 1 }
+        }
+      }
+    }
+  }
+}

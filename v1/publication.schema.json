@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://furchainlabs.github.io/protocol/v1/publication.schema.json",
+  "type": "object",
+  "required": ["id", "character", "type", "rating", "scopes", "created", "body", "signature"],
+  "additionalProperties": true,
+  "properties": {
+    "id": { "type": "string", "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$" },
+    "character": { "type": "string", "pattern": "^@[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$" },
+    "type": { "type": "string", "minLength": 1 },
+    "rating": { "type": "string", "enum": ["safe", "questionable", "explicit"] },
+    "scopes": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "encrypted": { "type": "boolean" },
+    "created": { "type": "string", "format": "date-time" },
+    "inReplyTo": {
+      "type": "object",
+      "required": ["character", "publication"],
+      "properties": {
+        "character": { "type": "string", "pattern": "^@[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$" },
+        "publication": { "type": "string", "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$" },
+        "verified": { "type": "boolean" }
+      },
+      "additionalProperties": true
+    },
+    "body": {
+      "type": "object",
+      "oneOf": [
+        {
+          "required": ["title", "content"],
+          "properties": {
+            "title": { "type": "string" },
+            "tags": { "type": "array", "items": { "type": "string" } },
+            "content": { "type": "object" }
+          },
+          "additionalProperties": true
+        },
+        {
+          "required": ["encrypted"],
+          "properties": {
+            "encrypted": {
+              "type": "object",
+              "required": ["alg", "groupRef", "keyVersion", "nonce", "aad", "ciphertext"],
+              "properties": {
+                "alg": { "type": "string", "const": "XChaCha20-Poly1305" },
+                "groupRef": { "type": "string", "minLength": 1 },
+                "keyVersion": { "type": "integer", "minimum": 1 },
+                "nonce": { "type": "string", "pattern": "^[A-Za-z0-9_-]+$" },
+                "aad": { "type": "string", "pattern": "^[A-Za-z0-9_-]+$" },
+                "ciphertext": { "type": "string", "pattern": "^[A-Za-z0-9_-]+$" }
+              },
+              "additionalProperties": true
+            }
+          },
+          "additionalProperties": true
+        }
+      ]
+    },
+    "signature": {
+      "type": "object",
+      "required": ["alg", "kid", "created", "sig"],
+      "properties": {
+        "alg": { "type": "string", "const": "Ed25519" },
+        "kid": { "type": "string", "minLength": 1 },
+        "created": { "type": "string", "format": "date-time" },
+        "sig": { "type": "string", "pattern": "^[A-Za-z0-9_-]+$" }
+      },
+      "additionalProperties": true
+    }
+  }
+}
